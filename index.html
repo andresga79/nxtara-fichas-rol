@@ -1,0 +1,706 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Fichas de rol v2 — Propuesta de mejora</title>
+<meta name="description" content="Rediseño de las fichas de arquetipo por rol: del rol descrito como tareas al rol definido por su tensión y su límite. Con la ficha del Líder Técnico reescrita.">
+<style>
+  :root{
+    --ink:#0F1720;
+    --navy:#1F3A5F;
+    --navy-soft:#2C4E77;
+    --slate:#55606B;
+    --slate-soft:#7A8794;
+    --line:#E1E7EE;
+    --line-strong:#C9D4E0;
+    --paper:#FFFFFF;
+    --paper-2:#F7F9FB;
+    --amber:#B45309;
+    --amber-bg:#FDF6EC;
+    --teal:#0F766E;
+    --teal-bg:#EEF7F5;
+    --serif:"Iowan Old Style","Palatino Linotype",Palatino,Georgia,serif;
+    --sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Inter,Roboto,"Helvetica Neue",Arial,sans-serif;
+    --mono:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+    --measure:74ch;
+    --radius:14px;
+  }
+
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  @media (prefers-reduced-motion: reduce){html{scroll-behavior:auto}}
+
+  body{
+    margin:0;
+    background:var(--paper);
+    color:var(--ink);
+    font-family:var(--sans);
+    font-size:17px;
+    line-height:1.65;
+    -webkit-font-smoothing:antialiased;
+    text-rendering:optimizeLegibility;
+  }
+
+  a{color:var(--navy);text-decoration:none;border-bottom:1px solid var(--line-strong)}
+  a:hover{color:var(--navy-soft);border-bottom-color:var(--navy-soft)}
+  a:focus-visible,button:focus-visible,summary:focus-visible{
+    outline:2px solid var(--navy);outline-offset:3px;border-radius:4px
+  }
+
+  .wrap{max-width:960px;margin:0 auto;padding:0 24px}
+
+  /* ---------- barra superior ---------- */
+  .topbar{
+    position:sticky;top:0;z-index:20;
+    background:rgba(255,255,255,.92);
+    backdrop-filter:saturate(140%) blur(8px);
+    border-bottom:1px solid var(--line);
+  }
+  .topbar .wrap{display:flex;align-items:center;gap:16px;min-height:56px;flex-wrap:wrap}
+  .brand{font-family:var(--serif);font-size:15px;letter-spacing:.02em;color:var(--navy);border:0;font-weight:600}
+  .nav{display:flex;gap:18px;flex-wrap:wrap;font-size:13.5px}
+  .nav a{border:0;color:var(--slate)}
+  .nav a:hover{color:var(--navy)}
+  .badge-estado{
+    margin-left:auto;font-size:11.5px;letter-spacing:.08em;text-transform:uppercase;
+    color:var(--amber);background:var(--amber-bg);border:1px solid #EDD9BE;
+    padding:5px 10px;border-radius:999px;white-space:nowrap;
+  }
+
+  /* ---------- hero ---------- */
+  .hero{padding:72px 0 44px;border-bottom:1px solid var(--line)}
+  .kicker{
+    font-size:11.5px;letter-spacing:.16em;text-transform:uppercase;
+    color:var(--slate-soft);margin:0 0 18px;font-weight:600;
+  }
+  h1{
+    font-family:var(--serif);font-weight:600;
+    font-size:clamp(34px,5.2vw,54px);
+    line-height:1.08;letter-spacing:-.015em;margin:0 0 20px;color:var(--ink);
+    max-width:22ch;
+  }
+  h1 em{font-style:italic;color:var(--navy)}
+  .lede{font-size:19.5px;line-height:1.6;color:var(--slate);max-width:64ch;margin:0 0 32px}
+  .lede strong{color:var(--ink);font-weight:600}
+
+  .meta{
+    display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));
+    gap:18px 28px;border-top:1px solid var(--line);padding-top:22px;max-width:760px;
+  }
+  .meta dt{font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--slate-soft);margin-bottom:4px}
+  .meta dd{margin:0;font-size:14.5px;color:var(--ink)}
+
+  /* ---------- secciones ---------- */
+  section{padding:56px 0;border-bottom:1px solid var(--line)}
+  section:last-of-type{border-bottom:0}
+  .sec-head{margin-bottom:32px}
+  .sec-num{
+    font-family:var(--mono);font-size:12px;color:var(--slate-soft);
+    letter-spacing:.08em;display:block;margin-bottom:10px;
+  }
+  h2{
+    font-family:var(--serif);font-weight:600;font-size:clamp(25px,3.4vw,33px);
+    line-height:1.18;letter-spacing:-.01em;margin:0 0 12px;max-width:34ch;
+  }
+  h3{
+    font-family:var(--sans);font-weight:650;font-size:17px;letter-spacing:-.005em;
+    margin:0 0 10px;
+  }
+  h4{
+    font-size:11.5px;letter-spacing:.12em;text-transform:uppercase;
+    color:var(--slate-soft);margin:0 0 10px;font-weight:650;
+  }
+  p{max-width:var(--measure);margin:0 0 16px}
+  .muted{color:var(--slate)}
+  .small{font-size:14.5px}
+
+  /* ---------- fortalezas ---------- */
+  .grid-3{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:18px}
+  .card{
+    background:var(--paper-2);border:1px solid var(--line);border-radius:var(--radius);
+    padding:22px 20px;
+  }
+  .card h3{font-size:15.5px;margin-bottom:8px}
+  .card p{font-size:14.5px;line-height:1.55;color:var(--slate);margin:0;max-width:none}
+  .card .tag{
+    display:inline-block;font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;
+    color:var(--teal);background:var(--teal-bg);border:1px solid #CFE6E2;
+    padding:3px 8px;border-radius:999px;margin-bottom:12px;font-weight:600;
+  }
+
+  /* ---------- problema ---------- */
+  .problem{
+    border-left:3px solid var(--amber);background:var(--amber-bg);
+    border-radius:0 var(--radius) var(--radius) 0;padding:24px 26px;margin:0 0 32px;
+  }
+  .problem blockquote{
+    margin:0 0 14px;font-family:var(--serif);font-size:19px;line-height:1.5;color:#5A4126;
+  }
+  .problem p{margin:0;font-size:15px;color:#6B5638;max-width:68ch}
+  .vs{
+    display:flex;align-items:center;gap:14px;flex-wrap:wrap;
+    font-size:13.5px;letter-spacing:.06em;text-transform:uppercase;margin:18px 0 0;
+  }
+  .vs span{padding:6px 12px;border-radius:999px;font-weight:650}
+  .vs .guia{background:#E8F1EA;color:#1F5134;border:1px solid #CBE0D2}
+  .vs .flecha{color:var(--slate-soft);font-size:16px;letter-spacing:0;text-transform:none}
+  .vs .guardian{background:#F6E3E3;color:#8C2F2F;border:1px solid #E7C7C7}
+
+  ol.findings{counter-reset:f;list-style:none;padding:0;margin:0;display:grid;gap:14px}
+  ol.findings li{
+    counter-increment:f;position:relative;padding-left:46px;font-size:15.5px;line-height:1.55;
+    color:var(--ink);max-width:72ch;
+  }
+  ol.findings li::before{
+    content:counter(f,decimal-leading-zero);
+    position:absolute;left:0;top:1px;
+    font-family:var(--mono);font-size:12px;color:var(--slate-soft);
+    border:1px solid var(--line-strong);border-radius:6px;
+    padding:2px 6px;line-height:1.3;
+  }
+  ol.findings li b{font-weight:650}
+
+  /* ---------- tabla ---------- */
+  .table-wrap{overflow-x:auto;border:1px solid var(--line);border-radius:var(--radius);background:var(--paper)}
+  table{border-collapse:collapse;width:100%;font-size:14.5px;min-width:640px}
+  thead th{
+    text-align:left;font-size:10.5px;letter-spacing:.11em;text-transform:uppercase;
+    color:var(--slate-soft);font-weight:650;padding:13px 16px;background:var(--paper-2);
+    border-bottom:1px solid var(--line-strong);white-space:nowrap;
+  }
+  tbody td{padding:14px 16px;border-bottom:1px solid var(--line);vertical-align:top;line-height:1.5}
+  tbody tr:last-child td{border-bottom:0}
+  tbody th{
+    text-align:left;font-weight:650;padding:14px 16px;border-bottom:1px solid var(--line);
+    white-space:nowrap;font-size:14.5px;color:var(--ink);
+  }
+  tbody tr:last-child th{border-bottom:0}
+  .n{font-family:var(--mono);font-size:12px;color:var(--slate-soft)}
+
+  /* tablas apiladas en móvil: sin scroll horizontal de 640px */
+  @media (max-width:680px){
+    table{min-width:0;display:block;font-size:14px}
+    thead{display:none}
+    tbody{display:block}
+    tbody tr{display:block;padding:16px 18px;border-bottom:1px solid var(--line)}
+    tbody tr:last-child{border-bottom:0}
+    tbody th,tbody td{display:block;border:0;padding:0;white-space:normal}
+    tbody th{font-size:15px;margin-bottom:8px}
+    tbody td{margin-bottom:10px}
+    tbody td:last-child{margin-bottom:0}
+    tbody td::before{
+      content:attr(data-label);display:block;
+      font-size:10px;letter-spacing:.1em;text-transform:uppercase;
+      color:var(--slate-soft);font-weight:650;margin-bottom:2px;
+    }
+  }
+
+  /* ---------- antes / después ---------- */
+  .compare{display:grid;grid-template-columns:1fr 1fr;gap:20px;align-items:start}
+  @media (max-width:820px){.compare{grid-template-columns:1fr}}
+
+  .panel{border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;background:var(--paper)}
+  .panel > header{
+    padding:12px 18px;border-bottom:1px solid var(--line);
+    display:flex;align-items:center;gap:10px;background:var(--paper-2);
+  }
+  .panel > header .dot{width:8px;height:8px;border-radius:50%;background:var(--slate-soft)}
+  .panel.before > header .dot{background:#B45454}
+  .panel.after > header .dot{background:var(--teal)}
+  .panel > header span{font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--slate);font-weight:650}
+  .panel .body{padding:22px 20px}
+  .panel .body p{font-size:14.5px;line-height:1.58;margin:0 0 12px}
+  .panel .body p:last-child{margin-bottom:0}
+
+  .card-title{
+    font-family:var(--serif);font-size:21px;line-height:1.25;margin:0 0 4px;color:var(--ink);
+  }
+  .card-sub{font-size:12.5px;letter-spacing:.05em;color:var(--slate-soft);margin:0 0 18px;text-transform:uppercase}
+
+  .attr{margin:0 0 14px}
+  .attr .row{display:flex;justify-content:space-between;align-items:baseline;gap:12px;margin-bottom:6px}
+  .attr .name{font-size:13.5px;font-weight:600}
+  .attr .val{font-family:var(--mono);font-size:12px;color:var(--slate)}
+  .bar{height:5px;background:#EDF1F5;border-radius:99px;overflow:hidden}
+  .bar i{display:block;height:100%;background:var(--navy);border-radius:99px}
+  .attr .note{font-size:12.5px;color:var(--slate);line-height:1.45;margin:6px 0 0}
+  .attr .note b{color:var(--ink);font-weight:600}
+
+  .mini{display:grid;gap:10px;margin:16px 0 0}
+  .mini .item{display:grid;grid-template-columns:auto 1fr;gap:10px;font-size:13.5px;line-height:1.5}
+  .mini .item dt{font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--slate-soft);font-weight:650;padding-top:2px;width:74px}
+  .mini .item dd{margin:0}
+  .limite{background:#FBF3F3;border:1px solid #EBD5D5;border-radius:10px;padding:12px 14px;margin-top:14px}
+  .limite p{margin:0;font-size:13.5px;line-height:1.5;color:#7A3A3A}
+  .super{background:var(--teal-bg);border:1px solid #D3E7E3;border-radius:10px;padding:12px 14px;margin-top:14px}
+  .super p{margin:0;font-size:13.5px;line-height:1.5;color:#1E5A52}
+
+  /* ---------- misiones ---------- */
+  .missions{display:grid;gap:14px}
+  .mission{
+    display:grid;grid-template-columns:auto 1fr auto;gap:16px;align-items:start;
+    border:1px solid var(--line);border-radius:var(--radius);padding:18px 20px;background:var(--paper);
+  }
+  .mission .idx{
+    font-family:var(--mono);font-size:12.5px;color:var(--navy);
+    background:var(--paper-2);border:1px solid var(--line);border-radius:8px;
+    width:28px;height:28px;display:grid;place-items:center;
+  }
+  .mission p{margin:0 0 6px;font-size:15px;line-height:1.5;max-width:none}
+  .mission p:last-child{margin-bottom:0}
+  .mission .ev{font-size:13.5px;color:var(--slate)}
+  .mission .ev b{color:var(--teal);font-weight:650}
+  .xp{
+    font-family:var(--mono);font-size:12px;color:var(--navy);white-space:nowrap;
+    background:#EDF2F8;border:1px solid #D8E3EF;padding:4px 9px;border-radius:999px;
+  }
+  @media (max-width:640px){
+    .mission{grid-template-columns:auto 1fr;gap:12px}
+    .mission .xp{grid-column:2;justify-self:start}
+  }
+
+  /* ---------- kpi ---------- */
+  .kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:18px}
+  .kpi{border:1px solid var(--line);border-radius:var(--radius);padding:22px 20px;background:var(--paper-2)}
+  .kpi .label{font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--slate-soft);margin:0 0 10px;font-weight:650}
+  .kpi .claim{font-family:var(--serif);font-size:19px;line-height:1.35;margin:0 0 10px}
+  .kpi p{font-size:13.5px;color:var(--slate);margin:0;max-width:none}
+
+  /* ---------- decisiones ---------- */
+  .decisions{display:grid;gap:16px;counter-reset:d}
+  .decision{
+    border:1px solid var(--line-strong);border-radius:var(--radius);padding:20px 22px;
+    background:var(--paper);position:relative;padding-left:64px;
+  }
+  .decision::before{
+    counter-increment:d;content:counter(d);
+    position:absolute;left:22px;top:20px;
+    font-family:var(--serif);font-size:24px;color:var(--line-strong);line-height:1;
+  }
+  .decision h3{margin-bottom:6px;font-size:15.5px}
+  .decision p{margin:0;font-size:14.5px;color:var(--slate);max-width:66ch}
+
+  /* ---------- checklist ---------- */
+  .checklist{list-style:none;padding:0;margin:0;display:grid;gap:2px;border:1px solid var(--line);border-radius:var(--radius);overflow:hidden}
+  .checklist li{
+    display:grid;grid-template-columns:auto 1fr auto;gap:14px;align-items:baseline;
+    padding:14px 18px;background:var(--paper);border-bottom:1px solid var(--line);font-size:15px;
+  }
+  .checklist li:last-child{border-bottom:0}
+  .checklist li .box{
+    width:15px;height:15px;border:1.5px solid var(--line-strong);border-radius:4px;
+    display:inline-block;position:relative;top:2px;
+  }
+  .checklist li .eff{font-family:var(--mono);font-size:11.5px;color:var(--slate-soft);white-space:nowrap}
+  @media (max-width:600px){.checklist li{grid-template-columns:auto 1fr}.checklist li .eff{grid-column:2}}
+
+  /* ---------- cierre ---------- */
+  .close{
+    background:var(--navy);color:#EAF0F6;border-radius:var(--radius);
+    padding:34px 30px;margin:8px 0 0;
+  }
+  .close h2{color:#fff;margin:0 0 12px;font-size:26px;max-width:36ch}
+  .close p{color:#C7D5E4;font-size:15.5px;margin:0 0 10px;max-width:70ch}
+  .close p:last-child{margin-bottom:0}
+  .close strong{color:#fff;font-weight:600}
+
+  footer{padding:34px 0 56px;color:var(--slate-soft);font-size:13px}
+  footer .wrap{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap}
+
+  /* ---------- print ---------- */
+  @media print{
+    @page{size:A4;margin:16mm}
+    body{font-size:10.5pt;line-height:1.45}
+    .topbar{display:none}
+    .hero{padding:0 0 18px}
+    h1{font-size:26pt}
+    section{padding:18px 0;break-inside:avoid}
+    .panel,.card,.mission,.kpi,.decision,.table-wrap,.close{break-inside:avoid}
+    .compare{grid-template-columns:1fr 1fr}
+    a{color:inherit;border:0}
+    .close{background:#fff;color:#000;border:1px solid #999;padding:18px}
+    .close h2,.close p,.close strong{color:#000}
+  }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="wrap">
+    <a class="brand" href="#top">Fichas de rol v2</a>
+    <nav class="nav" aria-label="Secciones">
+      <a href="#diagnostico">Diagnóstico</a>
+      <a href="#propuesta">Propuesta</a>
+      <a href="#antes-despues">Antes / después</a>
+      <a href="#misiones">Misiones</a>
+      <a href="#decisiones">Decisiones</a>
+    </nav>
+    <span class="badge-estado">Borrador para revisión</span>
+  </div>
+</div>
+
+<main id="top">
+
+  <header class="hero">
+    <div class="wrap">
+      <p class="kicker">Propuesta de mejora · Fichas de arquetipo por rol</p>
+      <h1>De describir tareas a definir <em>el rol</em> y su límite</h1>
+      <p class="lede">
+        La ficha actual cuenta qué hace el rol. Esta propuesta agrega lo que falta:
+        <strong>la tensión que resuelve</strong>, <strong>lo que el rol no hace</strong> y
+        <strong>la evidencia</strong> con la que se gana el XP. Con la ficha del Líder Técnico
+        ya reescrita como ejemplo aplicado.
+      </p>
+      <dl class="meta">
+        <div><dt>Alcance</dt><dd>7 roles · 3 misiones por rol</dd></div>
+        <div><dt>Estado</dt><dd>Borrador para revisión</dd></div>
+        <div><dt>Impacto</dt><dd>7 fichas + 1 matriz RACI</dd></div>
+        <div><dt>Esfuerzo</dt><dd>≈ 2 páginas de contenido</dd></div>
+      </dl>
+    </div>
+  </header>
+
+  <section id="diagnostico">
+    <div class="wrap">
+      <div class="sec-head">
+        <span class="sec-num">01 / Diagnóstico</span>
+        <h2>Lo que ya funciona y no hay que tocar</h2>
+      </div>
+
+      <div class="grid-3">
+        <div class="card">
+          <span class="tag">Conservar</span>
+          <h3>Rol, no persona</h3>
+          <p>“El arquetipo describe el rol, no a la persona” es la frase más valiosa de la lámina. Protege todo el material de parecer una evaluación de desempeño.</p>
+        </div>
+        <div class="card">
+          <span class="tag">Conservar</span>
+          <h3>XP parejo por ruta</h3>
+          <p>300 XP repartidos en partes iguales entre lámina, quiz y bonus: ningún rol suma más que otro. Es una decisión de diseño poco común y correcta.</p>
+        </div>
+        <div class="card">
+          <span class="tag">Conservar</span>
+          <h3>Disparadores reales</h3>
+          <p>Las misiones están escritas como situaciones de trabajo (“cuando alguien da por aprobado un cambio con solo…”), no como teoría. Eso es lo que se recuerda.</p>
+        </div>
+      </div>
+
+      <div class="sec-head" style="margin-top:48px">
+        <span class="sec-num">02 / El problema de fondo</span>
+        <h2>El arquetipo dice “guía”, las misiones dicen “aduanas”</h2>
+      </div>
+
+      <div class="problem">
+        <blockquote>
+          “Revisas de forma sistemática cada cambio y llevas el código desde develop hasta pedir su certificación.”
+        </blockquote>
+        <p>
+          Eso no describe a un guía técnico: describe un punto de control obligatorio. Es exactamente el
+          cuello de botella que el rol debería evitar, porque el equipo no puede entregar sin pasar por él.
+        </p>
+        <div class="vs">
+          <span class="guia">Guía del cambio</span>
+          <span class="flecha" aria-hidden="true">→</span>
+          <span class="guardian">Guardián del cambio</span>
+        </div>
+      </div>
+
+      <h3 style="margin-bottom:14px">Cuatro detalles de diseño que ajustar</h3>
+      <ol class="findings">
+        <li><b>A/R en la misma celda anula el RACI.</b> Si el Líder Técnico es aprobador y responsable de validar historias, no hay separación de deberes. En un RACI sano el valor lo valida el PO y el líder técnico es <b>C</b>.</li>
+        <li><b>Atributos y progreso mezclados.</b> “Ruta 0/3” convive con Arquitectura, Revisión y Mentoría: se lee como si el jugador tuviera “0 de 3” de algo.</li>
+        <li><b>Números sin escala.</b> 92, 90 y 80 sin referencia son decoración; si son dinámicos, necesitan una regla visible y qué significa estar alto o bajo.</li>
+        <li><b>El bonus de primer intento premia acertar rápido.</b> En un rol técnico conviene premiar lo contrario: detectar el error propio y corregirlo.</li>
+      </ol>
+    </div>
+  </section>
+
+  <section id="propuesta">
+    <div class="wrap">
+      <div class="sec-head">
+        <span class="sec-num">03 / Propuesta</span>
+        <h2>La ficha v2: seis bloques, una sola lectura</h2>
+        <p class="muted">Mismo formato, misma economía de XP. Se agregan los bloques que faltan y se separa lo que está mezclado.</p>
+      </div>
+
+      <div class="table-wrap">
+        <table>
+          <caption class="small muted" style="text-align:left;padding:0 0 10px">Estructura propuesta para cada ficha de rol</caption>
+          <thead>
+            <tr><th scope="col">Bloque</th><th scope="col">Qué contiene</th><th scope="col">Por qué</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <th scope="row"><span class="n">01</span> Identidad</th>
+              <td data-label="Qué contiene">Rol + arquetipo + <b>misión en una frase</b>: verbo + resultado.</td>
+              <td data-label="Por qué">Reemplaza la descripción de tareas por un propósito medible.</td>
+            </tr>
+            <tr>
+              <th scope="row"><span class="n">02</span> Tensión</th>
+              <td data-label="Qué contiene">El trade-off que el rol resuelve. En el Líder Técnico: velocidad vs. consistencia.</td>
+              <td data-label="Por qué">Da criterio en los casos grises, donde el quiz no llega.</td>
+            </tr>
+            <tr>
+              <th scope="row"><span class="n">03</span> Atributos</th>
+              <td data-label="Qué contiene">Tres atributos con escala 0–100 y qué se ve cuando está alto o bajo. El progreso de la ruta va en otro lugar.</td>
+              <td data-label="Por qué">Los números dejan de ser adorno y el jugador sabe qué mirar.</td>
+            </tr>
+            <tr>
+              <th scope="row"><span class="n">04</span> Superpoder y límite</th>
+              <td data-label="Qué contiene">Lo que sí hace y, sobre todo, <b>lo que este rol no hace</b>.</td>
+              <td data-label="Por qué">Es el antídoto al gatekeeping. Ninguna ficha debería existir sin su anti-alcance.</td>
+            </tr>
+            <tr>
+              <th scope="row"><span class="n">05</span> RACI</th>
+              <td data-label="Qué contiene">Cuatro o cinco filas coherentes con el playbook, nunca A y R en la misma celda.</td>
+              <td data-label="Por qué">Una sola fuente de verdad por actividad.</td>
+            </tr>
+            <tr>
+              <th scope="row"><span class="n">06</span> Misiones</th>
+              <td data-label="Qué contiene">Disparador → práctica → <b>evidencia</b> → XP.</td>
+              <td data-label="Por qué">La evidencia es lo que impide que el XP sea solo un quiz.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <section id="antes-despues">
+    <div class="wrap">
+      <div class="sec-head">
+        <span class="sec-num">04 / Aplicado</span>
+        <h2>La ficha del Líder Técnico, reescrita</h2>
+        <p class="muted">Mismo arquetipo, misma frase, mismo XP. Cambia lo que enseña.</p>
+      </div>
+
+      <div class="compare">
+
+        <article class="panel before">
+          <header><span class="dot" aria-hidden="true"></span><span>Antes</span></header>
+          <div class="body">
+            <p class="card-sub">Personaje · Guía técnica del cambio</p>
+            <h3 class="card-title">Líder Técnico · La Arquitecta</h3>
+            <div class="attr">
+              <div class="row"><span class="name">Arquitectura</span><span class="val">92</span></div>
+              <div class="bar"><i style="width:92%"></i></div>
+            </div>
+            <div class="attr">
+              <div class="row"><span class="name">Revisión</span><span class="val">90</span></div>
+              <div class="bar"><i style="width:90%"></i></div>
+            </div>
+            <div class="attr">
+              <div class="row"><span class="name">Mentoría</span><span class="val">80</span></div>
+              <div class="bar"><i style="width:80%"></i></div>
+            </div>
+            <p class="small muted" style="margin-top:4px">Ruta <b>0/3</b> · mezclada con los atributos</p>
+            <hr style="border:0;border-top:1px solid var(--line);margin:16px 0">
+            <p><b>Revisión de código y camino del cambio.</b> Revisas de forma sistemática cada cambio y llevas el código desde <span style="font-family:var(--mono);font-size:13px">develop</span> hasta pedir su certificación. En RACI eres <b>R</b> de la revisión de código y <b>A/R</b> de validar historias técnicas.</p>
+            <p style="font-family:var(--serif);font-style:italic;color:var(--slate)">«Cada cambio tiene un camino; mi trabajo es que nadie se pierda en él.»</p>
+          </div>
+        </article>
+
+        <article class="panel after">
+          <header><span class="dot" aria-hidden="true"></span><span>Después</span></header>
+          <div class="body">
+            <p class="card-sub">Personaje · Guía técnica del cambio</p>
+            <h3 class="card-title">Líder Técnico · La Arquitecta</h3>
+            <p class="small" style="margin-bottom:16px"><b>Misión:</b> sostener la calidad y la viabilidad técnica de lo que el equipo entrega, <b>de forma que el equipo no dependa de ti</b>.</p>
+            <p class="small muted" style="margin-bottom:18px"><b>Tensión que resuelve:</b> velocidad vs. consistencia. Aflojar una te da un sprint; aflojar la otra te da seis meses de deuda.</p>
+
+            <h4>Atributos</h4>
+            <div class="attr">
+              <div class="row"><span class="name">Arquitectura</span><span class="val">92</span></div>
+              <div class="bar"><i style="width:92%"></i></div>
+              <p class="note">Alto: las decisiones están escritas y el equipo las cita. Bajo: todo se re-discute cada sprint.</p>
+            </div>
+            <div class="attr">
+              <div class="row"><span class="name">Criterio de calidad</span><span class="val">90</span></div>
+              <div class="bar"><i style="width:90%"></i></div>
+              <p class="note">Alto: el DoD técnico no se negocia. Bajo: la calidad es la opinión del revisor.</p>
+            </div>
+            <div class="attr">
+              <div class="row"><span class="name">Habilitación</span><span class="val">80</span></div>
+              <div class="bar"><i style="width:80%"></i></div>
+              <p class="note">Alto: los PR vuelven con menos observaciones cada mes. Bajo: el equipo solo avanza cuando él está.</p>
+            </div>
+
+            <div class="super">
+              <p><b>Superpoder:</b> reducir la incertidumbre antes de que sea cara — spikes, PoC, decisiones registradas.</p>
+            </div>
+            <div class="limite">
+              <p><b>Límite:</b> no es el único que revisa, no es dueño del backlog y <b>no aprueba valor</b> — eso es del PO. Si todo pasa por él, el equipo dejó de ser autónomo.</p>
+            </div>
+
+            <h4 style="margin-top:20px">RACI</h4>
+            <dl class="mini">
+              <div class="item"><dt>Técnico</dt><dd><b>A</b> en criterios técnicos y DoD técnico · <b>R</b> en diseño técnico y spikes</dd></div>
+              <div class="item"><dt>Valor</dt><dd><b>C</b> en validación de historias · <b>C</b> en planificación</dd></div>
+            </dl>
+          </div>
+        </article>
+
+      </div>
+
+      <p class="small muted" style="margin-top:22px">
+        Nota: la propuesta <b>no elimina la revisión de código</b> ni la certificación si existen en el proceso.
+        Cambia la historia que cuenta la ficha: el líder técnico es quien hace que otros decidan mejor,
+        no la puerta por la que todos deben pasar.
+      </p>
+    </div>
+  </section>
+
+  <section id="misiones">
+    <div class="wrap">
+      <div class="sec-head">
+        <span class="sec-num">05 / Misiones</span>
+        <h2>Tres misiones, una evidencia cada una</h2>
+        <p class="muted">Cada misión conserva su disparador y suma una evidencia verificable. Sin evidencia, el XP es un quiz disfrazado.</p>
+      </div>
+
+      <div class="missions">
+        <div class="mission">
+          <span class="idx" aria-hidden="true">1</span>
+          <div>
+            <p><b>Cuando alguien da por aprobado un cambio con solo mirarlo</b> → instala un checklist de revisión de cinco puntos.</p>
+            <p class="ev"><b>Evidencia:</b> el checklist en el repositorio y tres PR usándolo.</p>
+          </div>
+          <span class="xp">+100 XP</span>
+        </div>
+        <div class="mission">
+          <span class="idx" aria-hidden="true">2</span>
+          <div>
+            <p><b>Cuando preparas un release</b> → registra la decisión técnica que más se repite en las discusiones.</p>
+            <p class="ev"><b>Evidencia:</b> decisión documentada con fecha, contexto y alternativa descartada.</p>
+          </div>
+          <span class="xp">+100 XP</span>
+        </div>
+        <div class="mission">
+          <span class="idx" aria-hidden="true">3</span>
+          <div>
+            <p><b>Cuando revisas un PR</b> → deja al menos una observación que enseñe el criterio, no solo el arreglo.</p>
+            <p class="ev"><b>Evidencia:</b> comentario con el “por qué” y seguimiento en el siguiente PR del mismo autor.</p>
+          </div>
+          <span class="xp">+100 XP</span>
+        </div>
+      </div>
+
+      <div class="table-wrap" style="margin-top:32px">
+        <table>
+          <caption class="small muted" style="text-align:left;padding:0 0 10px">Un solo cambio en el motor de XP</caption>
+          <thead>
+            <tr><th scope="col">Hoy</th><th scope="col">Propuesta</th><th scope="col">Por qué</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <th scope="row">Bonus de primer intento</th>
+              <td data-label="Propuesta">Bonus de <b>corrección</b>: XP extra cuando el segundo intento demuestra que entendió el error.</td>
+              <td data-label="Por qué">Premia aprender, que es justo lo que el rol necesita modelar. El primer intento perfecto suele ser suerte o lectura superficial.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <section id="indicadores">
+    <div class="wrap">
+      <div class="sec-head">
+        <span class="sec-num">06 / Medición</span>
+        <h2>Dos números para saber si el arquetipo funciona</h2>
+        <p class="muted">Miden el sistema, no a la persona. Si empeoran, el rol está absorbiendo lo que debería distribuir.</p>
+      </div>
+      <div class="kpis">
+        <div class="kpi">
+          <p class="label">Indicador 1</p>
+          <p class="claim">% de cambios que entraron sin pasar por el líder técnico</p>
+          <p>Sube cuando el criterio técnico está distribuido. Es el mejor termómetro de habilitación: si es cero, el equipo no es autónomo, aunque diga que sí.</p>
+        </div>
+        <div class="kpi">
+          <p class="label">Indicador 2</p>
+          <p class="claim">Tiempo medio en revisión</p>
+          <p>Baja cuando las decisiones están escritas y el checklist hace su trabajo. Es tiempo de espera puro: no agrega valor al producto.</p>
+        </div>
+      </div>
+      <p class="small muted" style="margin-top:20px">
+        Ninguno de los dos se usa para evaluar desempeño individual: son señales de diseño del sistema de trabajo.
+        Si se convierten en meta, se convierten en teatro.
+      </p>
+    </div>
+  </section>
+
+  <section id="decisiones">
+    <div class="wrap">
+      <div class="sec-head">
+        <span class="sec-num">07 / Antes de replicar</span>
+        <h2>Dos decisiones que te tocan a ti</h2>
+      </div>
+      <div class="decisions">
+        <div class="decision">
+          <h3>¿El líder técnico es revisor obligatorio o rol de habilitación?</h3>
+          <p>
+            Si en el proceso real la certificación es una puerta obligatoria, la ficha está describiendo la realidad
+            y lo que hay que cambiar es el proceso, no la lámina. Pero conviene que la lámina no lo celebre.
+          </p>
+        </div>
+        <div class="decision">
+          <h3>¿Qué convención de nombres usan las fichas?</h3>
+          <p>
+            “Líder Técnico · La Arquitecta” mezcla el género del rol con el del personaje. Si todas las fichas siguen
+            el patrón “El/La [arquetipo]”, se deja y se hace explícito; si no, se unifica antes de escribir las siete.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="plan">
+    <div class="wrap">
+      <div class="sec-head">
+        <span class="sec-num">08 / Siguiente paso</span>
+        <h2>Plan de implementación</h2>
+        <p class="muted">Siete fichas con el formato v2 y una matriz que garantice coherencia entre roles.</p>
+      </div>
+      <ul class="checklist">
+        <li><span class="box" aria-hidden="true"></span><span>Ficha Líder Técnico con el formato v2 aplicado</span><span class="eff">listo</span></li>
+        <li><span class="box" aria-hidden="true"></span><span>Ficha Scrum Master: tensión foco vs. transparencia</span><span class="eff">1 h</span></li>
+        <li><span class="box" aria-hidden="true"></span><span>Ficha Product Owner: tensión valor vs. urgencia</span><span class="eff">1 h</span></li>
+        <li><span class="box" aria-hidden="true"></span><span>Fichas Dev y QA: criterio y no solo ejecución</span><span class="eff">2 h</span></li>
+        <li><span class="box" aria-hidden="true"></span><span>Ficha Agile Coach y Sponsor</span><span class="eff">1 h</span></li>
+        <li><span class="box" aria-hidden="true"></span><span>Matriz RACI única: ninguna actividad con A y R en la misma celda</span><span class="eff">1 h</span></li>
+        <li><span class="box" aria-hidden="true"></span><span>Regla de XP de corrección en el motor de misiones</span><span class="eff">0,5 h</span></li>
+      </ul>
+      <p class="small muted" style="margin-top:18px">
+        Estimación total: <b>≈ 6,5 h de contenido</b>. Sin cambios de código en la lámina salvo el bloque de atributos y el de límite.
+      </p>
+    </div>
+  </section>
+
+  <section style="border-bottom:0">
+    <div class="wrap">
+      <div class="close">
+        <h2>La regla que ordena todo lo demás</h2>
+        <p>
+          Una ficha de rol sirve si un integrante nuevo puede leerla y saber <strong>qué decide</strong>,
+          <strong>qué no decide</strong> y <strong>cómo se nota que lo está haciendo bien</strong>.
+        </p>
+        <p>
+          Si la ficha solo enumera tareas, es una descripción de cargo. Si además delimita el rol,
+          es una herramienta de autonomía.
+        </p>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  <div class="wrap">
+    <span>Fichas de rol v2 · Propuesta de mejora</span>
+    <span>Borrador para revisión · Noviembre 2026</span>
+  </div>
+</footer>
+
+</body>
+</html>
